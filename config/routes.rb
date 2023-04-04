@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'users/show'
+  resources :rooms do
+    resources :messages
+  end
 
     devise_scope :user do
         # Redirests signing out users back to sign-in
@@ -7,5 +11,7 @@ Rails.application.routes.draw do
   devise_for :users
 
  root 'time#index'
+
+ get 'user/:id', to: 'users#show', as: 'user'
  
 end
