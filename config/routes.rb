@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Rails.application.routes.draw do
   root to: "pages#home"
 
@@ -23,3 +24,6 @@ Rails.application.routes.draw do
 
   # Learn more about this file at: https://guides.rubyonrails.org/routing.html
 end
+=======
+Rails.application.routes.draw { root "time#index" }
+>>>>>>> b22e4da6e30f951d7734c2175234b7958d7aa20b

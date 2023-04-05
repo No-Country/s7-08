@@ -4,11 +4,19 @@
 #
 # To use the locales, use `I18n.t`:
 #
+<<<<<<< HEAD
 #     I18n.t "s7_08"
 #
 # In views, this is aliased to just `t`:
 #
 #     <%= t("s7_08") %>
+=======
+#     I18n.t "hello"
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t("hello") %>
+>>>>>>> b22e4da6e30f951d7734c2175234b7958d7aa20b
 #
 # To use a different locale, set it with `I18n.locale`:
 #
@@ -30,4 +38,8 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+<<<<<<< HEAD
   s7_08: "S7_08!"
+=======
+  hello: "Hello world"
+>>>>>>> b22e4da6e30f951d7734c2175234b7958d7aa20b
