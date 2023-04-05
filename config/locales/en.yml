@@ -3,12 +3,12 @@
 # than English, add the necessary files in this directory.
 #
 # To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
+#     I18n.t "s7_08"
 #
 # In views, this is aliased to just `t`:
 #
-#     <%= t("hello") %>
+#     <%= t("s7_08") %>
+#     I18n.t "hello"
 #
 # To use a different locale, set it with `I18n.locale`:
 #
@@ -30,4 +30,5 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+  s7_08: "S7_08!"
   hello: "Hello world"
