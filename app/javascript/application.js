@@ -1,5 +1,6 @@
-// Entry point for the build script in your package.json.
-import "@hotwired/turbo-rails";
-// Stimulus controllers.
-import "./controllers";
-import "./components/counter";
+import "@hotwired/turbo-rails"
+import "controllers"
+// import "./components/counter"
+// import "trix"
+// import "@rails/actiontext"
+// import "./components/counter"rails

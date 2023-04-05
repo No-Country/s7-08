@@ -18,6 +18,10 @@ gem "puma", "~> 6.1"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
 
+gem "importmap-rails", "~> 0.3.4"
+
+#gem 'importmap-rails', '~> 0.3.2'
+
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
 
@@ -70,3 +74,8 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem "dockerfile-rails", ">= 1.2", :group => :development
+
+gem 'devise', '~> 4.9'
+
