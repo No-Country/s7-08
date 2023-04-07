@@ -1,14 +1,17 @@
 Rails.application.routes.draw do
-  get 'users/show'
+
   resources :rooms do
     resources :messages
   end
-
-    devise_scope :user do
-        # Redirests signing out users back to sign-in
-        get "users", to: "devise/sessions#new"
-    end
-  devise_for :users
+  devise_for :users, controllers: {
+    sessions: 'users/sessions',
+    registrations: 'users/registrations'
+  }
+    # devise_scope :user do
+    #     # Redirests signing out users back to sign-in
+    #     get "users", to: "devise/sessions#new"
+    # end
+ 
 
  root 'time#index'
 
