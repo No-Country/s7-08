@@ -1,6 +1,6 @@
 class RoomsController < ApplicationController
   before_action :authenticate_user!
-
+  before_action :set_status
   
 
   def index
@@ -13,7 +13,6 @@ class RoomsController < ApplicationController
 
   def create
     @room = Room.create(name: params["room"]["name"])
-    #redirect_to '/rooms'
   end
 
   def show
@@ -27,5 +26,11 @@ class RoomsController < ApplicationController
 
     @users= User.all_except(current_user)
     render 'index'
+  end
+
+  private
+
+  def set_status
+    current_user.update!(status: User.statuses[:online]) if current_user
   end
 end
