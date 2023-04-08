@@ -69,3 +69,5 @@ yarn-debug.log*
 /public/uploads
 # ignore database config
 config/database.yml
+/app/assets/builds/*
+!/app/assets/builds/.keep
