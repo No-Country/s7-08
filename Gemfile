@@ -59,6 +59,13 @@ group :development do
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   gem "rack-mini-profiler"
+  gem 'capistrano', '~> 3.10', require: false
+  gem 'capistrano-rails', '~> 1.5', require: false
+  gem 'capistrano-rbenv', '~> 2.1'
+  gem 'capistrano-db-tasks', require: false
+  #ed25519 support
+  gem 'ed25519', require: false
+  gem 'bcrypt_pbkdf', require: false
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"

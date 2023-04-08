@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
-
+import ReactDOM, { createRoot } from 'react-dom';
 const Counter = ({ arg }) => {
   const [count, setCount] = useState(0);
   const countRef = useRef(count);
