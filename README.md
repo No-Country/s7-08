@@ -1,24 +1,10 @@
-# README
+*** Inicializar proyecto (docker)
+Clonar la repo
+`git clone git@github.com:No-Country/s7-08.git`
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+CD a la repo
+`cd s7-08/`
+(con Docker inicializado) Buildear la imagen
+`docker compose build`
+Levantar la imagen
+`docker compose up`

@@ -1,19 +1,17 @@
 {
-  "name": "app",
-  "private": "true",
+  "name": "s7_08",
+  "private": true,
   "dependencies": {
-    "@hotwired/stimulus": "^3.2.1",
-    "@hotwired/turbo-rails": "^7.3.0",
-    "autoprefixer": "^10.4.14",
-    "esbuild": "^0.17.14",
-    "postcss": "^8.4.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "tailwindcss": "^3.2.7"
+    "@hotwired/stimulus": "3.2.1",
+    "@hotwired/turbo-rails": "7.3.0",
+    "autoprefixer": "10.4.14",
+    "esbuild": "0.17.13",
+    "postcss": "8.4.21",
+    "postcss-import": "15.1.0",
+    "tailwindcss": "3.2.7"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets",
-    "build:css": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
-  },
-  "packageManager": "yarn@1.22.19"
+    "build": "./run yarn:build",
+    "build:css": "./run yarn:build:css"
+  }
 }
