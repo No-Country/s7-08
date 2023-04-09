@@ -1,59 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<style>
-body {
-  margin: 0;
-}
-
-svg {
-  height: 40vmin;
-  pointer-events: none;
-  margin-bottom: 1em;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  svg {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-main {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to my Ruby on Rails 7 app</title>
+  <style>
+    body {
+      background-color: #1a202c;
+    }
+    #time {
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-<main>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-11.5 -10.23174 23 20.46348">
-  <title>React Logo</title>
-  <circle cx="0" cy="0" r="2.05" fill="#61dafb"/>
-  <g stroke="#61dafb" stroke-width="1" fill="none">
-    <ellipse rx="11" ry="4.2"/>
-    <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
-    <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
-  </g>
-</svg>
-<div id="root"
-  ruby=<%= RUBY_VERSION %>
-  rails=<%= Rails::VERSION::STRING %>>
-</div>
-</main>
+  <div class="container mx-auto">
+    <h1 class="text-4xl text-center text-slate-100">La hora actual es:</h1>
+    <h2 class="text-6xl text-center"><div id="time"></div></h2>
+  </div>
 </body>
 </html>

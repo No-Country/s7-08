@@ -1568,7 +1568,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useReducer(reducer, initialArg, init);
           }
-          function useRef2(initialValue) {
+          function useRef(initialValue) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
@@ -2359,7 +2359,7 @@
           exports.useLayoutEffect = useLayoutEffect;
           exports.useMemo = useMemo;
           exports.useReducer = useReducer;
-          exports.useRef = useRef2;
+          exports.useRef = useRef;
           exports.useState = useState2;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
@@ -22766,7 +22766,7 @@
               unmarkContainerAsRoot(container);
             }
           };
-          function createRoot2(container, options2) {
+          function createRoot(container, options2) {
             if (!isValidContainer(container)) {
               throw new Error("createRoot(...): Target container is not a DOM element.");
             }
@@ -23107,7 +23107,7 @@
                 error('You are importing createRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".');
               }
             }
-            return createRoot2(container, options2);
+            return createRoot(container, options2);
           }
           function hydrateRoot$1(container, initialChildren, options2) {
             {
@@ -27088,29 +27088,24 @@
   // node_modules/@hotwired/turbo-rails/app/javascript/turbo/index.js
   addEventListener("turbo:before-fetch-request", encodeMethodIntoRequestBody);
 
-  // app/javascript/components/application.tsx
+  // app/javascript/components/time.tsx
   var import_react = __toESM(require_react());
   var import_react_dom = __toESM(require_react_dom());
-  var Counter = ({ arg }) => {
-    const [count, setCount] = (0, import_react.useState)(0);
-    const countRef = (0, import_react.useRef)(count);
-    countRef.current = count;
+  function Time() {
+    const [time, setTime] = (0, import_react.useState)(new Date());
     (0, import_react.useEffect)(() => {
-      const interval = setInterval(() => {
-        setCount(countRef.current + 1);
+      const timerId = setInterval(() => {
+        setTime(new Date());
       }, 1e3);
-      return () => clearInterval(interval);
+      return () => clearInterval(timerId);
     }, []);
-    return /* @__PURE__ */ import_react.default.createElement("div", null, `${arg} - counter = ${count}!`);
-  };
+    return /* @__PURE__ */ import_react.default.createElement("div", null, time.toLocaleTimeString());
+  }
   document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("root");
-    const root = (0, import_react_dom.createRoot)(container);
-    root.render(/* @__PURE__ */ import_react.default.createElement(Counter, {
-      arg: `
-    Ruby ${container.getAttribute("ruby")}
-    Rails ${container.getAttribute("rails")}`
-    }));
+    const timeRoot = document.getElementById("time");
+    if (timeRoot) {
+      import_react_dom.default.render(/* @__PURE__ */ import_react.default.createElement(Time, null), timeRoot);
+    }
   });
 })();
 /**
