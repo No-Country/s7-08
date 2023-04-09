@@ -11,7 +11,13 @@ Rails.application.configure do
   # and those relying on copy on write to perform better.
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
-
+  #logging
+  config.logger = Logger.new(STDOUT)
+  config.logger.level = Logger::DEBUG
+  #log in log/production.log
+  config.logger =
+    Logger.new(Rails.root.join("log", Rails.env + ".log"), 5, 10 * 1024 * 1024)
+  config.logger.level = Logger::DEBUG
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
