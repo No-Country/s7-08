@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
-
   get "/up/", to: "up#index", as: :up
   get "/up/databases", to: "up#databases", as: :up_databases
+
+  root to: "time#index"
 
   # Sidekiq has a web dashboard which you can enable below. It's turned off by
   # default because you very likely wouldn't want this to be available to
@@ -22,4 +23,3 @@ Rails.application.routes.draw do
 
   # Learn more about this file at: https://guides.rubyonrails.org/routing.html
 end
-Rails.application.routes.draw { root "time#index" }

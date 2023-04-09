@@ -5,6 +5,7 @@
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
   var __esm = (fn, res) => function __init() {
     return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
   };
@@ -15,22 +16,17 @@
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
   };
-  var __copyProps = (to, from, except, desc) => {
-    if (from && typeof from === "object" || typeof from === "function") {
-      for (let key of __getOwnPropNames(from))
-        if (!__hasOwnProp.call(to, key) && key !== except)
-          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  var __reExport = (target, module, copyDefault, desc) => {
+    if (module && typeof module === "object" || typeof module === "function") {
+      for (let key of __getOwnPropNames(module))
+        if (!__hasOwnProp.call(target, key) && (copyDefault || key !== "default"))
+          __defProp(target, key, { get: () => module[key], enumerable: !(desc = __getOwnPropDesc(module, key)) || desc.enumerable });
     }
-    return to;
+    return target;
   };
-  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-    // If the importer is in node compatibility mode or this is not an ESM
-    // file that has been converted to a CommonJS file using a Babel-
-    // compatible transform (i.e. "__esModule" has not been set), then set
-    // "default" to the CommonJS "module.exports" for node compatibility.
-    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-    mod
-  ));
+  var __toESM = (module, isNodeMode) => {
+    return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", !isNodeMode && module && module.__esModule ? { get: () => module.default, enumerable: true } : { value: module, enumerable: true })), module);
+  };
 
   // node_modules/@rails/actioncable/src/adapters.js
   var adapters_default;
@@ -64,7 +60,7 @@
   var init_connection_monitor = __esm({
     "node_modules/@rails/actioncable/src/connection_monitor.js"() {
       init_logger();
-      now = () => (/* @__PURE__ */ new Date()).getTime();
+      now = () => new Date().getTime();
       secondsSince = (time) => (now() - time) / 1e3;
       ConnectionMonitor = class {
         constructor(connection) {
@@ -105,7 +101,6 @@
           this.disconnectedAt = now();
           logger_default.log("ConnectionMonitor recorded disconnect");
         }
-        // Private
         startPolling() {
           this.stopPolling();
           this.poll();
@@ -114,13 +109,10 @@
           clearTimeout(this.pollTimeout);
         }
         poll() {
-          this.pollTimeout = setTimeout(
-            () => {
-              this.reconnectIfStale();
-              this.poll();
-            },
-            this.getPollInterval()
-          );
+          this.pollTimeout = setTimeout(() => {
+            this.reconnectIfStale();
+            this.poll();
+          }, this.getPollInterval());
         }
         getPollInterval() {
           const { staleThreshold, reconnectionBackoffRate } = this.constructor;
@@ -152,15 +144,12 @@
         }
         visibilityDidChange() {
           if (document.visibilityState === "visible") {
-            setTimeout(
-              () => {
-                if (this.connectionIsStale() || !this.connection.isOpen()) {
-                  logger_default.log(`ConnectionMonitor reopening stale connection on visibilitychange. visibilityState = ${document.visibilityState}`);
-                  this.connection.reopen();
-                }
-              },
-              200
-            );
+            setTimeout(() => {
+              if (this.connectionIsStale() || !this.connection.isOpen()) {
+                logger_default.log(`ConnectionMonitor reopening stale connection on visibilitychange. visibilityState = ${document.visibilityState}`);
+                this.connection.reopen();
+              }
+            }, 200);
           }
         }
       };
@@ -242,7 +231,7 @@
           if (!allowReconnect) {
             this.monitor.stop();
           }
-          if (this.isOpen()) {
+          if (this.isActive()) {
             return this.webSocket.close();
           }
         }
@@ -272,7 +261,6 @@
         isActive() {
           return this.isState("open", "connecting");
         }
-        // Private
         isProtocolSupported() {
           return indexOf.call(supportedProtocols, this.getProtocol()) >= 0;
         }
@@ -371,7 +359,6 @@
           this.identifier = JSON.stringify(params);
           extend(this, mixin);
         }
-        // Perform a channel action with the optional data passed as an attribute
         perform(action, data = {}) {
           data.action = action;
           return this.send(data);
@@ -417,17 +404,14 @@
           clearTimeout(this.retryTimeout);
         }
         retrySubscribing() {
-          this.retryTimeout = setTimeout(
-            () => {
-              if (this.subscriptions && typeof this.subscriptions.subscribe === "function") {
-                this.pendingSubscriptions.map((subscription) => {
-                  logger_default.log(`SubscriptionGuarantor resubscribing ${subscription.identifier}`);
-                  this.subscriptions.subscribe(subscription);
-                });
-              }
-            },
-            500
-          );
+          this.retryTimeout = setTimeout(() => {
+            if (this.subscriptions && typeof this.subscriptions.subscribe === "function") {
+              this.pendingSubscriptions.map((subscription) => {
+                logger_default.log(`SubscriptionGuarantor resubscribing ${subscription.identifier}`);
+                this.subscriptions.subscribe(subscription);
+              });
+            }
+          }, 500);
         }
       };
       subscription_guarantor_default = SubscriptionGuarantor;
@@ -453,7 +437,6 @@
           const subscription = new Subscription(this.consumer, params, mixin);
           return this.add(subscription);
         }
-        // Private
         add(subscription) {
           this.subscriptions.push(subscription);
           this.consumer.ensureActiveConnection();
@@ -638,10 +621,6 @@
             return null;
           }
           var ReactCurrentDispatcher = {
-            /**
-             * @internal
-             * @type {ReactComponent}
-             */
             current: null
           };
           var ReactCurrentBatchConfig = {
@@ -649,15 +628,10 @@
           };
           var ReactCurrentActQueue = {
             current: null,
-            // Used to reproduce behavior of `batchedUpdates` in legacy mode.
             isBatchingLegacy: false,
             didScheduleLegacyUpdate: false
           };
           var ReactCurrentOwner = {
-            /**
-             * @internal
-             * @type {ReactComponent}
-             */
             current: null
           };
           var ReactDebugCurrentFrame = {};
@@ -749,62 +723,15 @@
             }
           }
           var ReactNoopUpdateQueue = {
-            /**
-             * Checks whether or not this composite component is mounted.
-             * @param {ReactClass} publicInstance The instance we want to test.
-             * @return {boolean} True if mounted, false otherwise.
-             * @protected
-             * @final
-             */
             isMounted: function(publicInstance) {
               return false;
             },
-            /**
-             * Forces an update. This should only be invoked when it is known with
-             * certainty that we are **not** in a DOM transaction.
-             *
-             * You may want to call this when you know that some deeper aspect of the
-             * component's state has changed but `setState` was not called.
-             *
-             * This will not invoke `shouldComponentUpdate`, but it will invoke
-             * `componentWillUpdate` and `componentDidUpdate`.
-             *
-             * @param {ReactClass} publicInstance The instance that should rerender.
-             * @param {?function} callback Called after component is updated.
-             * @param {?string} callerName name of the calling function in the public API.
-             * @internal
-             */
             enqueueForceUpdate: function(publicInstance, callback, callerName) {
               warnNoop(publicInstance, "forceUpdate");
             },
-            /**
-             * Replaces all of the state. Always use this or `setState` to mutate state.
-             * You should treat `this.state` as immutable.
-             *
-             * There is no guarantee that `this.state` will be immediately updated, so
-             * accessing `this.state` after calling this method may return the old value.
-             *
-             * @param {ReactClass} publicInstance The instance that should rerender.
-             * @param {object} completeState Next state.
-             * @param {?function} callback Called after component is updated.
-             * @param {?string} callerName name of the calling function in the public API.
-             * @internal
-             */
             enqueueReplaceState: function(publicInstance, completeState, callback, callerName) {
               warnNoop(publicInstance, "replaceState");
             },
-            /**
-             * Sets a subset of the state. This only exists because _pendingState is
-             * internal. This provides a merging strategy that is not available to deep
-             * properties which is confusing. TODO: Expose pendingState or don't use it
-             * during the merge.
-             *
-             * @param {ReactClass} publicInstance The instance that should rerender.
-             * @param {object} partialState Next partial state to be merged with state.
-             * @param {?function} callback Called after component is updated.
-             * @param {?string} Name of the calling function in the public API.
-             * @internal
-             */
             enqueueSetState: function(publicInstance, partialState, callback, callerName) {
               warnNoop(publicInstance, "setState");
             }
@@ -1049,14 +976,11 @@
           }
           var ReactElement = function(type, key, ref, self2, source, owner, props) {
             var element = {
-              // This tag allows us to uniquely identify this as a React Element
               $$typeof: REACT_ELEMENT_TYPE,
-              // Built-in properties that belong on the element
               type,
               key,
               ref,
               props,
-              // Record the component responsible for creating this element.
               _owner: owner
             };
             {
@@ -1273,17 +1197,7 @@
                       checkKeyStringCoercion(mappedChild.key);
                     }
                   }
-                  mappedChild = cloneAndReplaceKey(
-                    mappedChild,
-                    // Keep both the (mapped) and old keys if they differ, just as
-                    // traverseAllChildren used to do for objects as children
-                    escapedPrefix + // $FlowFixMe Flow incorrectly thinks React.Portal doesn't have a key
-                    (mappedChild.key && (!_child || _child.key !== mappedChild.key) ? (
-                      // $FlowFixMe Flow incorrectly thinks existing element's key can be a number
-                      // eslint-disable-next-line react-internal/safe-string-coercion
-                      escapeUserProvidedKey("" + mappedChild.key) + "/"
-                    ) : "") + childKey
-                  );
+                  mappedChild = cloneAndReplaceKey(mappedChild, escapedPrefix + (mappedChild.key && (!_child || _child.key !== mappedChild.key) ? escapeUserProvidedKey("" + mappedChild.key) + "/" : "") + childKey);
                 }
                 array.push(mappedChild);
               }
@@ -1363,20 +1277,11 @@
           function createContext(defaultValue) {
             var context = {
               $$typeof: REACT_CONTEXT_TYPE,
-              // As a workaround to support multiple concurrent renderers, we categorize
-              // some renderers as primary and others as secondary. We only expect
-              // there to be two concurrent renderers at most: React Native (primary) and
-              // Fabric (secondary); React DOM (primary) and React ART (secondary).
-              // Secondary renderers store their context values on separate fields.
               _currentValue: defaultValue,
               _currentValue2: defaultValue,
-              // Used to track how many concurrent renderers this context currently
-              // supports within in a single renderer. Such as parallel server rendering.
               _threadCount: 0,
-              // These are circular
               Provider: null,
               Consumer: null,
-              // Add these to use same hidden class in VM as ServerContext
               _defaultValue: null,
               _globalName: null
             };
@@ -1504,7 +1409,6 @@
           }
           function lazy(ctor) {
             var payload = {
-              // We use these fields to store the result.
               _status: Uninitialized,
               _result: ctor
             };
@@ -1598,11 +1502,7 @@
               return true;
             }
             if (typeof type === "object" && type !== null) {
-              if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || // This needs to include all possible module reference object
-              // types supported by any Flight configuration anywhere since
-              // we don't know which Flight build this will end up being used
-              // with.
-              type.$$typeof === REACT_MODULE_REFERENCE || type.getModuleId !== void 0) {
+              if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_MODULE_REFERENCE || type.getModuleId !== void 0) {
                 return true;
               }
             }
@@ -2118,9 +2018,7 @@
               var propTypes;
               if (typeof type === "function") {
                 propTypes = type.propTypes;
-              } else if (typeof type === "object" && (type.$$typeof === REACT_FORWARD_REF_TYPE || // Note: Memo only checks outer props here.
-              // Inner props are checked in the reconciler.
-              type.$$typeof === REACT_MEMO_TYPE)) {
+              } else if (typeof type === "object" && (type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_MEMO_TYPE)) {
                 propTypes = type.propTypes;
               } else {
                 return;
@@ -3238,9 +3136,6 @@
           var reservedProps = [
             "children",
             "dangerouslySetInnerHTML",
-            // TODO: This prevents the assignment of defaultValue to regular
-            // elements (not just inputs). Now that ReactDOMInput assigns to the
-            // defaultValue property -- do we need this?
             "defaultValue",
             "defaultChecked",
             "innerHTML",
@@ -3249,71 +3144,21 @@
             "style"
           ];
           reservedProps.forEach(function(name) {
-            properties[name] = new PropertyInfoRecord(
-              name,
-              RESERVED,
-              false,
-              // mustUseProperty
-              name,
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, RESERVED, false, name, null, false, false);
           });
           [["acceptCharset", "accept-charset"], ["className", "class"], ["htmlFor", "for"], ["httpEquiv", "http-equiv"]].forEach(function(_ref) {
             var name = _ref[0], attributeName = _ref[1];
-            properties[name] = new PropertyInfoRecord(
-              name,
-              STRING,
-              false,
-              // mustUseProperty
-              attributeName,
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, STRING, false, attributeName, null, false, false);
           });
           ["contentEditable", "draggable", "spellCheck", "value"].forEach(function(name) {
-            properties[name] = new PropertyInfoRecord(
-              name,
-              BOOLEANISH_STRING,
-              false,
-              // mustUseProperty
-              name.toLowerCase(),
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, BOOLEANISH_STRING, false, name.toLowerCase(), null, false, false);
           });
           ["autoReverse", "externalResourcesRequired", "focusable", "preserveAlpha"].forEach(function(name) {
-            properties[name] = new PropertyInfoRecord(
-              name,
-              BOOLEANISH_STRING,
-              false,
-              // mustUseProperty
-              name,
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, BOOLEANISH_STRING, false, name, null, false, false);
           });
           [
             "allowFullScreen",
             "async",
-            // Note: there is a special case that prevents it from being written to the DOM
-            // on the client side because the browsers are inconsistent. Instead we call focus().
             "autoFocus",
             "autoPlay",
             "controls",
@@ -3334,106 +3179,34 @@
             "reversed",
             "scoped",
             "seamless",
-            // Microdata
             "itemScope"
           ].forEach(function(name) {
-            properties[name] = new PropertyInfoRecord(
-              name,
-              BOOLEAN,
-              false,
-              // mustUseProperty
-              name.toLowerCase(),
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, BOOLEAN, false, name.toLowerCase(), null, false, false);
           });
           [
             "checked",
-            // Note: `option.selected` is not updated if `select.multiple` is
-            // disabled with `removeAttribute`. We have special logic for handling this.
             "multiple",
             "muted",
             "selected"
-            // NOTE: if you add a camelCased prop to this list,
-            // you'll need to set attributeName to name.toLowerCase()
-            // instead in the assignment below.
           ].forEach(function(name) {
-            properties[name] = new PropertyInfoRecord(
-              name,
-              BOOLEAN,
-              true,
-              // mustUseProperty
-              name,
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, BOOLEAN, true, name, null, false, false);
           });
           [
             "capture",
             "download"
-            // NOTE: if you add a camelCased prop to this list,
-            // you'll need to set attributeName to name.toLowerCase()
-            // instead in the assignment below.
           ].forEach(function(name) {
-            properties[name] = new PropertyInfoRecord(
-              name,
-              OVERLOADED_BOOLEAN,
-              false,
-              // mustUseProperty
-              name,
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, OVERLOADED_BOOLEAN, false, name, null, false, false);
           });
           [
             "cols",
             "rows",
             "size",
             "span"
-            // NOTE: if you add a camelCased prop to this list,
-            // you'll need to set attributeName to name.toLowerCase()
-            // instead in the assignment below.
           ].forEach(function(name) {
-            properties[name] = new PropertyInfoRecord(
-              name,
-              POSITIVE_NUMERIC,
-              false,
-              // mustUseProperty
-              name,
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, POSITIVE_NUMERIC, false, name, null, false, false);
           });
           ["rowSpan", "start"].forEach(function(name) {
-            properties[name] = new PropertyInfoRecord(
-              name,
-              NUMERIC,
-              false,
-              // mustUseProperty
-              name.toLowerCase(),
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, NUMERIC, false, name.toLowerCase(), null, false, false);
           });
           var CAMELIZE = /[\-\:]([a-z])/g;
           var capitalize2 = function(token) {
@@ -3513,23 +3286,9 @@
             "writing-mode",
             "xmlns:xlink",
             "x-height"
-            // NOTE: if you add a camelCased prop to this list,
-            // you'll need to set attributeName to name.toLowerCase()
-            // instead in the assignment below.
           ].forEach(function(attributeName) {
             var name = attributeName.replace(CAMELIZE, capitalize2);
-            properties[name] = new PropertyInfoRecord(
-              name,
-              STRING,
-              false,
-              // mustUseProperty
-              attributeName,
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, STRING, false, attributeName, null, false, false);
           });
           [
             "xlink:actuate",
@@ -3538,85 +3297,25 @@
             "xlink:show",
             "xlink:title",
             "xlink:type"
-            // NOTE: if you add a camelCased prop to this list,
-            // you'll need to set attributeName to name.toLowerCase()
-            // instead in the assignment below.
           ].forEach(function(attributeName) {
             var name = attributeName.replace(CAMELIZE, capitalize2);
-            properties[name] = new PropertyInfoRecord(
-              name,
-              STRING,
-              false,
-              // mustUseProperty
-              attributeName,
-              "http://www.w3.org/1999/xlink",
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, STRING, false, attributeName, "http://www.w3.org/1999/xlink", false, false);
           });
           [
             "xml:base",
             "xml:lang",
             "xml:space"
-            // NOTE: if you add a camelCased prop to this list,
-            // you'll need to set attributeName to name.toLowerCase()
-            // instead in the assignment below.
           ].forEach(function(attributeName) {
             var name = attributeName.replace(CAMELIZE, capitalize2);
-            properties[name] = new PropertyInfoRecord(
-              name,
-              STRING,
-              false,
-              // mustUseProperty
-              attributeName,
-              "http://www.w3.org/XML/1998/namespace",
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[name] = new PropertyInfoRecord(name, STRING, false, attributeName, "http://www.w3.org/XML/1998/namespace", false, false);
           });
           ["tabIndex", "crossOrigin"].forEach(function(attributeName) {
-            properties[attributeName] = new PropertyInfoRecord(
-              attributeName,
-              STRING,
-              false,
-              // mustUseProperty
-              attributeName.toLowerCase(),
-              // attributeName
-              null,
-              // attributeNamespace
-              false,
-              // sanitizeURL
-              false
-            );
+            properties[attributeName] = new PropertyInfoRecord(attributeName, STRING, false, attributeName.toLowerCase(), null, false, false);
           });
           var xlinkHref = "xlinkHref";
-          properties[xlinkHref] = new PropertyInfoRecord(
-            "xlinkHref",
-            STRING,
-            false,
-            // mustUseProperty
-            "xlink:href",
-            "http://www.w3.org/1999/xlink",
-            true,
-            // sanitizeURL
-            false
-          );
+          properties[xlinkHref] = new PropertyInfoRecord("xlinkHref", STRING, false, "xlink:href", "http://www.w3.org/1999/xlink", true, false);
           ["src", "href", "action", "formAction"].forEach(function(attributeName) {
-            properties[attributeName] = new PropertyInfoRecord(
-              attributeName,
-              STRING,
-              false,
-              // mustUseProperty
-              attributeName.toLowerCase(),
-              // attributeName
-              null,
-              // attributeNamespace
-              true,
-              // sanitizeURL
-              true
-            );
+            properties[attributeName] = new PropertyInfoRecord(attributeName, STRING, false, attributeName.toLowerCase(), null, true, true);
           });
           var isJavaScriptProtocol = /^[\u0000-\u001F ]*j[\r\n\t]*a[\r\n\t]*v[\r\n\t]*a[\r\n\t]*s[\r\n\t]*c[\r\n\t]*r[\r\n\t]*i[\r\n\t]*p[\r\n\t]*t[\r\n\t]*\:/i;
           var didWarn = false;
@@ -4459,9 +4158,7 @@
             var type = props.type;
             if (value != null) {
               if (type === "number") {
-                if (value === 0 && node.value === "" || // We explicitly want to coerce to number here if possible.
-                // eslint-disable-next-line
-                node.value != value) {
+                if (value === 0 && node.value === "" || node.value != value) {
                   node.value = toString(value);
                 }
               } else if (node.value !== toString(value)) {
@@ -4547,10 +4244,7 @@
             }
           }
           function setDefaultValue(node, type, value) {
-            if (
-              // Focused number inputs synchronize on blur. See ChangeEventPlugin.js
-              type !== "number" || getActiveElement(node.ownerDocument) !== node
-            ) {
+            if (type !== "number" || getActiveElement(node.ownerDocument) !== node) {
               if (value == null) {
                 node.defaultValue = toString(node._wrapperState.initialValue);
               } else if (node.defaultValue !== toString(value)) {
@@ -4948,7 +4642,6 @@
             widows: true,
             zIndex: true,
             zoom: true,
-            // SVG-related properties
             fillOpacity: true,
             floodOpacity: true,
             stopOpacity: true,
@@ -5006,14 +4699,7 @@
                 return;
               }
               warnedStyleNames[name] = true;
-              error2(
-                "Unsupported style property %s. Did you mean %s?",
-                name,
-                // As Andi Smith suggests
-                // (http://www.andismith.com/blog/2012/02/modernizr-prefixed/), an `-ms` prefix
-                // is converted to lowercase `ms`.
-                camelize2(name.replace(msPattern$1, "ms-"))
-              );
+              error2("Unsupported style property %s. Did you mean %s?", name, camelize2(name.replace(msPattern$1, "ms-")));
             };
             var warnBadVendoredStyleName = function(name) {
               if (warnedStyleNames.hasOwnProperty(name) && warnedStyleNames[name]) {
@@ -5154,7 +4840,6 @@
             source: true,
             track: true,
             wbr: true
-            // NOTE: menuitem's close tag should be omitted, but that causes problems.
           };
           var voidElementTags = assign({
             menuitem: true
@@ -5205,7 +4890,6 @@
             }
           }
           var possibleStandardNames = {
-            // HTML
             accept: "accept",
             acceptcharset: "acceptCharset",
             "accept-charset": "acceptCharset",
@@ -5355,7 +5039,6 @@
             width: "width",
             wmode: "wmode",
             wrap: "wrap",
-            // SVG
             about: "about",
             accentheight: "accentHeight",
             "accent-height": "accentHeight",
@@ -5695,19 +5378,14 @@
           };
           var ariaProperties = {
             "aria-current": 0,
-            // state
             "aria-description": 0,
             "aria-details": 0,
             "aria-disabled": 0,
-            // state
             "aria-hidden": 0,
-            // state
             "aria-invalid": 0,
-            // state
             "aria-keyshortcuts": 0,
             "aria-label": 0,
             "aria-roledescription": 0,
-            // Widget Attributes
             "aria-autocomplete": 0,
             "aria-checked": 0,
             "aria-expanded": 0,
@@ -5727,15 +5405,12 @@
             "aria-valuemin": 0,
             "aria-valuenow": 0,
             "aria-valuetext": 0,
-            // Live Region Attributes
             "aria-atomic": 0,
             "aria-busy": 0,
             "aria-live": 0,
             "aria-relevant": 0,
-            // Drag-and-Drop Attributes
             "aria-dropeffect": 0,
             "aria-grabbed": 0,
-            // Relationship Attributes
             "aria-activedescendant": 0,
             "aria-colcount": 0,
             "aria-colindex": 0,
@@ -6253,112 +5928,33 @@
           function set(key, value) {
             key._reactInternals = value;
           }
-          var NoFlags = (
-            /*                      */
-            0
-          );
-          var PerformedWork = (
-            /*                */
-            1
-          );
-          var Placement = (
-            /*                    */
-            2
-          );
-          var Update = (
-            /*                       */
-            4
-          );
-          var ChildDeletion = (
-            /*                */
-            16
-          );
-          var ContentReset = (
-            /*                 */
-            32
-          );
-          var Callback = (
-            /*                     */
-            64
-          );
-          var DidCapture = (
-            /*                   */
-            128
-          );
-          var ForceClientRender = (
-            /*            */
-            256
-          );
-          var Ref = (
-            /*                          */
-            512
-          );
-          var Snapshot2 = (
-            /*                     */
-            1024
-          );
-          var Passive = (
-            /*                      */
-            2048
-          );
-          var Hydrating = (
-            /*                    */
-            4096
-          );
-          var Visibility = (
-            /*                   */
-            8192
-          );
-          var StoreConsistency = (
-            /*             */
-            16384
-          );
+          var NoFlags = 0;
+          var PerformedWork = 1;
+          var Placement = 2;
+          var Update = 4;
+          var ChildDeletion = 16;
+          var ContentReset = 32;
+          var Callback = 64;
+          var DidCapture = 128;
+          var ForceClientRender = 256;
+          var Ref = 512;
+          var Snapshot2 = 1024;
+          var Passive = 2048;
+          var Hydrating = 4096;
+          var Visibility = 8192;
+          var StoreConsistency = 16384;
           var LifecycleEffectMask = Passive | Update | Callback | Ref | Snapshot2 | StoreConsistency;
-          var HostEffectMask = (
-            /*               */
-            32767
-          );
-          var Incomplete = (
-            /*                   */
-            32768
-          );
-          var ShouldCapture = (
-            /*                */
-            65536
-          );
-          var ForceUpdateForLegacySuspense = (
-            /* */
-            131072
-          );
-          var Forked = (
-            /*                       */
-            1048576
-          );
-          var RefStatic = (
-            /*                    */
-            2097152
-          );
-          var LayoutStatic = (
-            /*                 */
-            4194304
-          );
-          var PassiveStatic = (
-            /*                */
-            8388608
-          );
-          var MountLayoutDev = (
-            /*               */
-            16777216
-          );
-          var MountPassiveDev = (
-            /*              */
-            33554432
-          );
-          var BeforeMutationMask = (
-            // TODO: Remove Update flag from before mutation phase by re-landing Visibility
-            // flag logic (see #20043)
-            Update | Snapshot2 | 0
-          );
+          var HostEffectMask = 32767;
+          var Incomplete = 32768;
+          var ShouldCapture = 65536;
+          var ForceUpdateForLegacySuspense = 131072;
+          var Forked = 1048576;
+          var RefStatic = 2097152;
+          var LayoutStatic = 4194304;
+          var PassiveStatic = 8388608;
+          var MountLayoutDev = 16777216;
+          var MountPassiveDev = 33554432;
+          var BeforeMutationMask = Update | Snapshot2 | 0;
           var MutationMask = Placement | Update | ChildDeletion | ContentReset | Ref | Hydrating | Visibility;
           var LayoutMask = Update | Callback | Ref | Visibility;
           var PassiveMask = Passive | ChildDeletion;
@@ -6900,26 +6496,11 @@
               }
             }
           }
-          var NoMode = (
-            /*                         */
-            0
-          );
-          var ConcurrentMode = (
-            /*                 */
-            1
-          );
-          var ProfileMode = (
-            /*                    */
-            2
-          );
-          var StrictLegacyMode = (
-            /*               */
-            8
-          );
-          var StrictEffectsMode = (
-            /*              */
-            16
-          );
+          var NoMode = 0;
+          var ConcurrentMode = 1;
+          var ProfileMode = 2;
+          var StrictLegacyMode = 8;
+          var StrictEffectsMode = 16;
           var clz32 = Math.clz32 ? Math.clz32 : clz32Fallback;
           var log = Math.log;
           var LN2 = Math.LN2;
@@ -6931,151 +6512,43 @@
             return 31 - (log(asUint) / LN2 | 0) | 0;
           }
           var TotalLanes = 31;
-          var NoLanes = (
-            /*                        */
-            0
-          );
-          var NoLane = (
-            /*                          */
-            0
-          );
-          var SyncLane = (
-            /*                        */
-            1
-          );
-          var InputContinuousHydrationLane = (
-            /*    */
-            2
-          );
-          var InputContinuousLane = (
-            /*             */
-            4
-          );
-          var DefaultHydrationLane = (
-            /*            */
-            8
-          );
-          var DefaultLane = (
-            /*                     */
-            16
-          );
-          var TransitionHydrationLane = (
-            /*                */
-            32
-          );
-          var TransitionLanes = (
-            /*                       */
-            4194240
-          );
-          var TransitionLane1 = (
-            /*                        */
-            64
-          );
-          var TransitionLane2 = (
-            /*                        */
-            128
-          );
-          var TransitionLane3 = (
-            /*                        */
-            256
-          );
-          var TransitionLane4 = (
-            /*                        */
-            512
-          );
-          var TransitionLane5 = (
-            /*                        */
-            1024
-          );
-          var TransitionLane6 = (
-            /*                        */
-            2048
-          );
-          var TransitionLane7 = (
-            /*                        */
-            4096
-          );
-          var TransitionLane8 = (
-            /*                        */
-            8192
-          );
-          var TransitionLane9 = (
-            /*                        */
-            16384
-          );
-          var TransitionLane10 = (
-            /*                       */
-            32768
-          );
-          var TransitionLane11 = (
-            /*                       */
-            65536
-          );
-          var TransitionLane12 = (
-            /*                       */
-            131072
-          );
-          var TransitionLane13 = (
-            /*                       */
-            262144
-          );
-          var TransitionLane14 = (
-            /*                       */
-            524288
-          );
-          var TransitionLane15 = (
-            /*                       */
-            1048576
-          );
-          var TransitionLane16 = (
-            /*                       */
-            2097152
-          );
-          var RetryLanes = (
-            /*                            */
-            130023424
-          );
-          var RetryLane1 = (
-            /*                             */
-            4194304
-          );
-          var RetryLane2 = (
-            /*                             */
-            8388608
-          );
-          var RetryLane3 = (
-            /*                             */
-            16777216
-          );
-          var RetryLane4 = (
-            /*                             */
-            33554432
-          );
-          var RetryLane5 = (
-            /*                             */
-            67108864
-          );
+          var NoLanes = 0;
+          var NoLane = 0;
+          var SyncLane = 1;
+          var InputContinuousHydrationLane = 2;
+          var InputContinuousLane = 4;
+          var DefaultHydrationLane = 8;
+          var DefaultLane = 16;
+          var TransitionHydrationLane = 32;
+          var TransitionLanes = 4194240;
+          var TransitionLane1 = 64;
+          var TransitionLane2 = 128;
+          var TransitionLane3 = 256;
+          var TransitionLane4 = 512;
+          var TransitionLane5 = 1024;
+          var TransitionLane6 = 2048;
+          var TransitionLane7 = 4096;
+          var TransitionLane8 = 8192;
+          var TransitionLane9 = 16384;
+          var TransitionLane10 = 32768;
+          var TransitionLane11 = 65536;
+          var TransitionLane12 = 131072;
+          var TransitionLane13 = 262144;
+          var TransitionLane14 = 524288;
+          var TransitionLane15 = 1048576;
+          var TransitionLane16 = 2097152;
+          var RetryLanes = 130023424;
+          var RetryLane1 = 4194304;
+          var RetryLane2 = 8388608;
+          var RetryLane3 = 16777216;
+          var RetryLane4 = 33554432;
+          var RetryLane5 = 67108864;
           var SomeRetryLane = RetryLane1;
-          var SelectiveHydrationLane = (
-            /*          */
-            134217728
-          );
-          var NonIdleLanes = (
-            /*                          */
-            268435455
-          );
-          var IdleHydrationLane = (
-            /*               */
-            268435456
-          );
-          var IdleLane = (
-            /*                        */
-            536870912
-          );
-          var OffscreenLane = (
-            /*                   */
-            1073741824
-          );
+          var SelectiveHydrationLane = 134217728;
+          var NonIdleLanes = 268435455;
+          var IdleHydrationLane = 268435456;
+          var IdleLane = 536870912;
+          var OffscreenLane = 1073741824;
           function getLabelForLane(lane) {
             {
               if (lane & SyncLane) {
@@ -7203,19 +6676,10 @@
             if (nextLanes === NoLanes) {
               return NoLanes;
             }
-            if (wipLanes !== NoLanes && wipLanes !== nextLanes && // If we already suspended with a delay, then interrupting is fine. Don't
-            // bother waiting until the root is complete.
-            (wipLanes & suspendedLanes) === NoLanes) {
+            if (wipLanes !== NoLanes && wipLanes !== nextLanes && (wipLanes & suspendedLanes) === NoLanes) {
               var nextLane = getHighestPriorityLane(nextLanes);
               var wipLane = getHighestPriorityLane(wipLanes);
-              if (
-                // Tests whether the next lane is equal or lower priority than the wip
-                // one. This works because the bits decrease in priority as you go left.
-                nextLane >= wipLane || // Default priority updates should not interrupt transition updates. The
-                // only difference between default updates and transition updates is that
-                // default updates do not support refresh transitions.
-                nextLane === DefaultLane && (wipLane & TransitionLanes) !== NoLanes
-              ) {
+              if (nextLane >= wipLane || nextLane === DefaultLane && (wipLane & TransitionLanes) !== NoLanes) {
                 return wipLanes;
               }
             }
@@ -7461,11 +6925,7 @@
             while (lanes) {
               var index2 = pickArbitraryLaneIndex(lanes);
               var lane = 1 << index2;
-              if (
-                // Is this one of the newly entangled lanes?
-                lane & entangledLanes | // Is this lane transitively entangled with the newly entangled lanes?
-                entanglements[index2] & entangledLanes
-              ) {
+              if (lane & entangledLanes | entanglements[index2] & entangledLanes) {
                 entanglements[index2] |= entangledLanes;
               }
               lanes &= ~lane;
@@ -7654,7 +7114,6 @@
             "keyup",
             "input",
             "textInput",
-            // Intentionally camelCase
             "copy",
             "cut",
             "paste",
@@ -8256,18 +7715,8 @@
                 }
                 this.isPropagationStopped = functionThatReturnsTrue;
               },
-              /**
-               * We release all dispatched `SyntheticEvent`s after each event loop, adding
-               * them back into the pool. This allows a way to hold onto a reference that
-               * won't be added back into the pool.
-               */
               persist: function() {
               },
-              /**
-               * Checks if this event should be released back into the pool.
-               *
-               * @return {boolean} True if this should not be released, false otherwise.
-               */
               isPersistent: functionThatReturnsTrue
             });
             return SyntheticBaseEvent;
@@ -8459,7 +7908,6 @@
             repeat: 0,
             locale: 0,
             getModifierState: getEventModifierState,
-            // Legacy Interface
             charCode: function(event) {
               if (event.type === "keypress") {
                 return getEventCharCode(event);
@@ -8515,25 +7963,12 @@
           var SyntheticTransitionEvent = createSyntheticEvent(TransitionEventInterface);
           var WheelEventInterface = assign({}, MouseEventInterface, {
             deltaX: function(event) {
-              return "deltaX" in event ? event.deltaX : (
-                // Fallback to `wheelDeltaX` for Webkit and normalize (right is positive).
-                "wheelDeltaX" in event ? -event.wheelDeltaX : 0
-              );
+              return "deltaX" in event ? event.deltaX : "wheelDeltaX" in event ? -event.wheelDeltaX : 0;
             },
             deltaY: function(event) {
-              return "deltaY" in event ? event.deltaY : (
-                // Fallback to `wheelDeltaY` for Webkit and normalize (down is positive).
-                "wheelDeltaY" in event ? -event.wheelDeltaY : (
-                  // Fallback to `wheelDelta` for IE<9 and normalize (down is positive).
-                  "wheelDelta" in event ? -event.wheelDelta : 0
-                )
-              );
+              return "deltaY" in event ? event.deltaY : "wheelDeltaY" in event ? -event.wheelDeltaY : "wheelDelta" in event ? -event.wheelDelta : 0;
             },
             deltaZ: 0,
-            // Browsers without "deltaMode" is reporting in raw wheel delta where one
-            // notch on the scroll is always +/- 120, roughly equivalent to pixels.
-            // A good approximation of DOM_DELTA_LINE (1) is 5% of viewport size or
-            // ~40 pixels, for DOM_DELTA_SCREEN (2) it is 87.5% of viewport size.
             deltaMode: 0
           });
           var SyntheticWheelEvent = createSyntheticEvent(WheelEventInterface);
@@ -8556,8 +7991,7 @@
           }
           var hasSpaceKeypress = false;
           function isKeypressCommand(nativeEvent) {
-            return (nativeEvent.ctrlKey || nativeEvent.altKey || nativeEvent.metaKey) && // ctrlKey && altKey is equivalent to AltGr, and is not a command.
-            !(nativeEvent.ctrlKey && nativeEvent.altKey);
+            return (nativeEvent.ctrlKey || nativeEvent.altKey || nativeEvent.metaKey) && !(nativeEvent.ctrlKey && nativeEvent.altKey);
           }
           function getCompositionEventType(domEventName) {
             switch (domEventName) {
@@ -9459,11 +8893,7 @@
             }
             var inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
             {
-              var accumulateTargetOnly = !inCapturePhase && // TODO: ideally, we'd eventually add all events from
-              // nonDelegatedEvents list in DOMPluginEventSystem.
-              // Then we can remove this special list.
-              // This is a breaking change that can wait until React 18.
-              domEventName === "scroll";
+              var accumulateTargetOnly = !inCapturePhase && domEventName === "scroll";
               var _listeners = accumulateSinglePhaseListeners(targetInst, reactName, nativeEvent.type, inCapturePhase, accumulateTargetOnly);
               if (_listeners.length > 0) {
                 var _event = new SyntheticEventCtor(reactName, reactEventType, null, nativeEvent, nativeEventTarget);
@@ -9815,13 +9245,7 @@
           var normalizeHTML;
           {
             warnedUnknownTags = {
-              // There are working polyfills for <dialog>. Let people use it.
               dialog: true,
-              // Electron ships a custom <webview> tag to display external web content in
-              // an isolated frame and process.
-              // This tag is not present in non Electron environments such as JSDom which
-              // is often used for testing purposes.
-              // @see https://electronjs.org/docs/api/webview-tag
               webview: true
             };
             validatePropertiesInDevelopment = function(type, props) {
@@ -10368,15 +9792,12 @@
                     listenToNonDelegatedEvent("scroll", domElement);
                   }
                 }
-              } else if (shouldWarnDev && true && // Convince Flow we've calculated it (it's DEV-only in this method.)
-              typeof isCustomComponentTag === "boolean") {
+              } else if (shouldWarnDev && true && typeof isCustomComponentTag === "boolean") {
                 var serverValue = void 0;
                 var propertyInfo = isCustomComponentTag && enableCustomElementPropertySupport ? null : getPropertyInfo(propKey);
                 if (rawProps[SUPPRESS_HYDRATION_WARNING] === true)
                   ;
-                else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING || // Controlled attributes are not validated
-                // TODO: Only ignore them on controlled tags.
-                propKey === "value" || propKey === "checked" || propKey === "selected")
+                else if (propKey === SUPPRESS_CONTENT_EDITABLE_WARNING || propKey === SUPPRESS_HYDRATION_WARNING || propKey === "value" || propKey === "checked" || propKey === "selected")
                   ;
                 else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
                   var serverHTML = domElement.innerHTML;
@@ -10433,10 +9854,7 @@
             }
             {
               if (shouldWarnDev) {
-                if (
-                  // $FlowFixMe - Should be inferred as not undefined.
-                  extraAttributeNames.size > 0 && rawProps[SUPPRESS_HYDRATION_WARNING] !== true
-                ) {
+                if (extraAttributeNames.size > 0 && rawProps[SUPPRESS_HYDRATION_WARNING] !== true) {
                   warnForExtraAttributes(extraAttributeNames);
                 }
               }
@@ -10533,9 +9951,6 @@
               "marquee",
               "object",
               "template",
-              // https://html.spec.whatwg.org/multipage/syntax.html#html-integration-point
-              // TODO: Distinguish by namespace here -- for <title>, including it here
-              // errs on the side of fewer warnings
               "foreignObject",
               "desc",
               "title"
@@ -11803,14 +11218,7 @@
                 }
                 case HostComponent: {
                   var isConcurrentMode = (returnFiber.mode & ConcurrentMode) !== NoMode;
-                  didNotHydrateInstance(
-                    returnFiber.type,
-                    returnFiber.memoizedProps,
-                    returnFiber.stateNode,
-                    instance,
-                    // TODO: Delete this argument when we remove the legacy root API.
-                    isConcurrentMode
-                  );
+                  didNotHydrateInstance(returnFiber.type, returnFiber.memoizedProps, returnFiber.stateNode, instance, isConcurrentMode);
                   break;
                 }
                 case SuspenseComponent: {
@@ -11865,28 +11273,13 @@
                       var _type = fiber.type;
                       var _props = fiber.pendingProps;
                       var isConcurrentMode = (returnFiber.mode & ConcurrentMode) !== NoMode;
-                      didNotFindHydratableInstance(
-                        parentType,
-                        parentProps,
-                        parentInstance,
-                        _type,
-                        _props,
-                        // TODO: Delete this argument when we remove the legacy root API.
-                        isConcurrentMode
-                      );
+                      didNotFindHydratableInstance(parentType, parentProps, parentInstance, _type, _props, isConcurrentMode);
                       break;
                     }
                     case HostText: {
                       var _text = fiber.pendingProps;
                       var _isConcurrentMode = (returnFiber.mode & ConcurrentMode) !== NoMode;
-                      didNotFindHydratableTextInstance(
-                        parentType,
-                        parentProps,
-                        parentInstance,
-                        _text,
-                        // TODO: Delete this argument when we remove the legacy root API.
-                        _isConcurrentMode
-                      );
+                      didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, _text, _isConcurrentMode);
                       break;
                     }
                   }
@@ -12024,13 +11417,7 @@
                   case HostRoot: {
                     var parentContainer = returnFiber.stateNode.containerInfo;
                     var isConcurrentMode = (returnFiber.mode & ConcurrentMode) !== NoMode;
-                    didNotMatchHydratedContainerTextInstance(
-                      parentContainer,
-                      textInstance,
-                      textContent,
-                      // TODO: Delete this argument when we remove the legacy root API.
-                      isConcurrentMode
-                    );
+                    didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, textContent, isConcurrentMode);
                     break;
                   }
                   case HostComponent: {
@@ -12038,15 +11425,7 @@
                     var parentProps = returnFiber.memoizedProps;
                     var parentInstance = returnFiber.stateNode;
                     var _isConcurrentMode2 = (returnFiber.mode & ConcurrentMode) !== NoMode;
-                    didNotMatchHydratedTextInstance(
-                      parentType,
-                      parentProps,
-                      parentInstance,
-                      textInstance,
-                      textContent,
-                      // TODO: Delete this argument when we remove the legacy root API.
-                      _isConcurrentMode2
-                    );
+                    didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, textContent, _isConcurrentMode2);
                     break;
                   }
                 }
@@ -12187,8 +11566,7 @@
               if (didWarnAboutUnsafeLifecycles.has(fiber.type)) {
                 return;
               }
-              if (typeof instance.componentWillMount === "function" && // Don't warn about react-lifecycles-compat polyfilled components.
-              instance.componentWillMount.__suppressDeprecationWarning !== true) {
+              if (typeof instance.componentWillMount === "function" && instance.componentWillMount.__suppressDeprecationWarning !== true) {
                 pendingComponentWillMountWarnings.push(fiber);
               }
               if (fiber.mode & StrictLegacyMode && typeof instance.UNSAFE_componentWillMount === "function") {
@@ -12921,9 +12299,6 @@
                   if (newLastBaseUpdate !== null) {
                     var _clone = {
                       eventTime: updateEventTime,
-                      // This update is going to be committed so we never want uncommit
-                      // it. Using NoLane works because 0 is a subset of all bitmasks, so
-                      // this will never be skipped by the check above.
                       lane: NoLane,
                       tag: update.tag,
                       payload: update.payload,
@@ -12934,9 +12309,7 @@
                   }
                   newState = getStateFromUpdate(workInProgress2, queue, update, newState, props, instance);
                   var callback = update.callback;
-                  if (callback !== null && // If the update was already committed, we should not queue its
-                  // callback again.
-                  update.lane !== NoLane) {
+                  if (callback !== null && update.lane !== NoLane) {
                     workInProgress2.flags |= Callback;
                     var effects = queue.effects;
                     if (effects === null) {
@@ -13267,10 +12640,7 @@
             var contextType = ctor.contextType;
             {
               if ("contextType" in ctor) {
-                var isValid = (
-                  // Allow null for conditional declaration
-                  contextType === null || contextType !== void 0 && contextType.$$typeof === REACT_CONTEXT_TYPE && contextType._context === void 0
-                );
+                var isValid = contextType === null || contextType !== void 0 && contextType.$$typeof === REACT_CONTEXT_TYPE && contextType._context === void 0;
                 if (!isValid && !didWarnAboutInvalidateContextType.has(ctor)) {
                   didWarnAboutInvalidateContextType.add(ctor);
                   var addendum = "";
@@ -13565,11 +12935,7 @@
               applyDerivedStateFromProps(workInProgress2, ctor, getDerivedStateFromProps, newProps);
               newState = workInProgress2.memoizedState;
             }
-            var shouldUpdate = checkHasForceUpdateAfterProcessing() || checkShouldComponentUpdate(workInProgress2, ctor, oldProps, newProps, oldState, newState, nextContext) || // TODO: In some cases, we'll end up checking if context has changed twice,
-            // both before and after `shouldComponentUpdate` has been called. Not ideal,
-            // but I'm loath to refactor this function. This only happens for memoized
-            // components so it's not that common.
-            enableLazyContextPropagation;
+            var shouldUpdate = checkHasForceUpdateAfterProcessing() || checkShouldComponentUpdate(workInProgress2, ctor, oldProps, newProps, oldState, newState, nextContext) || enableLazyContextPropagation;
             if (shouldUpdate) {
               if (!hasNewLifecycles && (typeof instance.UNSAFE_componentWillUpdate === "function" || typeof instance.componentWillUpdate === "function")) {
                 if (typeof instance.componentWillUpdate === "function") {
@@ -13640,10 +13006,7 @@
             var mixedRef = element.ref;
             if (mixedRef !== null && typeof mixedRef !== "function" && typeof mixedRef !== "object") {
               {
-                if ((returnFiber.mode & StrictLegacyMode || warnAboutStringRefs) && // We warn in ReactElement.js if owner and self are equal for string refs
-                // because these cannot be automatically converted to an arrow function
-                // using a codemod. Therefore, we don't have to warn about string refs again.
-                !(element._owner && element._self && element._owner.stateNode !== element._self)) {
+                if ((returnFiber.mode & StrictLegacyMode || warnAboutStringRefs) && !(element._owner && element._self && element._owner.stateNode !== element._self)) {
                   var componentName = getComponentNameFromFiber(returnFiber) || "Component";
                   if (!didWarnAboutStringRefs[componentName]) {
                     {
@@ -13803,12 +13166,7 @@
                 return updateFragment2(returnFiber, current2, element.props.children, lanes, element.key);
               }
               if (current2 !== null) {
-                if (current2.elementType === elementType2 || // Keep this check inline so it only runs on the false path:
-                isCompatibleFamilyForHotReloading(current2, element) || // Lazy types should reconcile their resolved type.
-                // We need to do this after the Hot Reloading check above,
-                // because hot reloading has different semantics than prod because
-                // it doesn't resuspend. So we can't let the call below suspend.
-                typeof elementType2 === "object" && elementType2 !== null && elementType2.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType2) === current2.type) {
+                if (current2.elementType === elementType2 || isCompatibleFamilyForHotReloading(current2, element) || typeof elementType2 === "object" && elementType2 !== null && elementType2.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType2) === current2.type) {
                   var existing = useFiber(current2, element.props);
                   existing.ref = coerceRef(returnFiber, current2, element);
                   existing.return = returnFiber;
@@ -14101,8 +13459,7 @@
                 throw new Error("An object is not an iterable. This error is likely caused by a bug in React. Please file an issue.");
               }
               {
-                if (typeof Symbol === "function" && // $FlowFixMe Flow doesn't know about toStringTag
-                newChildrenIterable[Symbol.toStringTag] === "Generator") {
+                if (typeof Symbol === "function" && newChildrenIterable[Symbol.toStringTag] === "Generator") {
                   if (!didWarnAboutGenerators) {
                     error2("Using Generators as children is unsupported and will likely yield unexpected results because enumerating a generator mutates it. You may convert it to an array with `Array.from()` or the `[...spread]` operator before rendering. Keep in mind you might need to polyfill these features for older browsers.");
                   }
@@ -14250,12 +13607,7 @@
                       return existing;
                     }
                   } else {
-                    if (child.elementType === elementType2 || // Keep this check inline so it only runs on the false path:
-                    isCompatibleFamilyForHotReloading(child, element) || // Lazy types should reconcile their resolved type.
-                    // We need to do this after the Hot Reloading check above,
-                    // because hot reloading has different semantics than prod because
-                    // it doesn't resuspend. So we can't let the call below suspend.
-                    typeof elementType2 === "object" && elementType2 !== null && elementType2.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType2) === child.type) {
+                    if (child.elementType === elementType2 || isCompatibleFamilyForHotReloading(child, element) || typeof elementType2 === "object" && elementType2 !== null && elementType2.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType2) === child.type) {
                       deleteRemainingChildren(returnFiber, child.sibling);
                       var _existing = useFiber(child, element.props);
                       _existing.ref = coerceRef(returnFiber, child, element);
@@ -14466,9 +13818,7 @@
                     return node;
                   }
                 }
-              } else if (node.tag === SuspenseListComponent && // revealOrder undefined can't be trusted because it don't
-              // keep track of whether it suspended or not.
-              node.memoizedProps.revealOrder !== void 0) {
+              } else if (node.tag === SuspenseListComponent && node.memoizedProps.revealOrder !== void 0) {
                 var didSuspend = (node.flags & DidCapture) !== NoFlags;
                 if (didSuspend) {
                   return node;
@@ -14492,26 +13842,11 @@
             }
             return null;
           }
-          var NoFlags$1 = (
-            /*   */
-            0
-          );
-          var HasEffect = (
-            /* */
-            1
-          );
-          var Insertion = (
-            /*  */
-            2
-          );
-          var Layout = (
-            /*    */
-            4
-          );
-          var Passive$1 = (
-            /*   */
-            8
-          );
+          var NoFlags$1 = 0;
+          var HasEffect = 1;
+          var Insertion = 2;
+          var Layout = 4;
+          var Passive$1 = 8;
           var workInProgressSources = [];
           function resetWorkInProgressVersions() {
             for (var i = 0; i < workInProgressSources.length; i++) {
@@ -14685,12 +14020,7 @@
               currentHookNameInDev = null;
               hookTypesDev = null;
               hookTypesUpdateIndexDev = -1;
-              if (current2 !== null && (current2.flags & StaticMask) !== (workInProgress2.flags & StaticMask) && // Disable this warning in legacy mode, because legacy Suspense is weird
-              // and creates false positives. To make this work in legacy mode, we'd
-              // need to mark fibers that commit in an incomplete state, somehow. For
-              // now I'll disable the warning that most of the bugs that would trigger
-              // it are either exclusive to concurrent mode or exist in both.
-              (current2.mode & ConcurrentMode) !== NoMode) {
+              if (current2 !== null && (current2.flags & StaticMask) !== (workInProgress2.flags & StaticMask) && (current2.mode & ConcurrentMode) !== NoMode) {
                 error2("Internal React error: Expected static flag was missing. Please notify the React team.");
               }
             }
@@ -14880,9 +14210,6 @@
                 } else {
                   if (newBaseQueueLast !== null) {
                     var _clone = {
-                      // This update is going to be committed so we never want uncommit
-                      // it. Using NoLane works because 0 is a subset of all bitmasks, so
-                      // this will never be skipped by the check above.
                       lane: NoLane,
                       action: update.action,
                       hasEagerState: update.hasEagerState,
@@ -15037,9 +14364,7 @@
             }
             var inst = hook.queue;
             updateEffect(subscribeToStore.bind(null, fiber, inst, subscribe), [subscribe]);
-            if (inst.getSnapshot !== getSnapshot || snapshotChanged || // Check if the susbcribe function changed. We can save some memory by
-            // checking whether we scheduled a subscription effect above.
-            workInProgressHook !== null && workInProgressHook.memoizedState.tag & HasEffect) {
+            if (inst.getSnapshot !== getSnapshot || snapshotChanged || workInProgressHook !== null && workInProgressHook.memoizedState.tag & HasEffect) {
               fiber.flags |= Passive;
               pushEffect(HasEffect | Passive$1, updateStoreInstance.bind(null, fiber, inst, nextSnapshot, getSnapshot), void 0, null);
               var root2 = getWorkInProgressRoot();
@@ -15133,7 +14458,6 @@
               create,
               destroy,
               deps,
-              // Circular
               next: null
             };
             var componentUpdateQueue = currentlyRenderingFiber$1.updateQueue;
@@ -16784,13 +16108,7 @@
               if (workInProgress2.type !== workInProgress2.elementType) {
                 var innerPropTypes = Component.propTypes;
                 if (innerPropTypes) {
-                  checkPropTypes(
-                    innerPropTypes,
-                    nextProps,
-                    // Resolved props
-                    "prop",
-                    getComponentNameFromType(Component)
-                  );
+                  checkPropTypes(innerPropTypes, nextProps, "prop", getComponentNameFromType(Component));
                 }
               }
             }
@@ -16835,8 +16153,7 @@
           function updateMemoComponent(current2, workInProgress2, Component, nextProps, renderLanes2) {
             if (current2 === null) {
               var type = Component.type;
-              if (isSimpleFunctionComponent(type) && Component.compare === null && // SimpleMemoComponent codepath doesn't resolve outer props either.
-              Component.defaultProps === void 0) {
+              if (isSimpleFunctionComponent(type) && Component.compare === null && Component.defaultProps === void 0) {
                 var resolvedType = type;
                 {
                   resolvedType = resolveFunctionForHotReloading(type);
@@ -16851,13 +16168,7 @@
               {
                 var innerPropTypes = type.propTypes;
                 if (innerPropTypes) {
-                  checkPropTypes(
-                    innerPropTypes,
-                    nextProps,
-                    // Resolved props
-                    "prop",
-                    getComponentNameFromType(type)
-                  );
+                  checkPropTypes(innerPropTypes, nextProps, "prop", getComponentNameFromType(type));
                 }
               }
               var child = createFiberFromTypeAndProps(Component.type, null, nextProps, workInProgress2, workInProgress2.mode, renderLanes2);
@@ -16870,13 +16181,7 @@
               var _type = Component.type;
               var _innerPropTypes = _type.propTypes;
               if (_innerPropTypes) {
-                checkPropTypes(
-                  _innerPropTypes,
-                  nextProps,
-                  // Resolved props
-                  "prop",
-                  getComponentNameFromType(_type)
-                );
+                checkPropTypes(_innerPropTypes, nextProps, "prop", getComponentNameFromType(_type));
               }
             }
             var currentChild = current2.child;
@@ -16911,21 +16216,14 @@
                   }
                   var outerPropTypes = outerMemoType && outerMemoType.propTypes;
                   if (outerPropTypes) {
-                    checkPropTypes(
-                      outerPropTypes,
-                      nextProps,
-                      // Resolved (SimpleMemoComponent has no defaultProps)
-                      "prop",
-                      getComponentNameFromType(outerMemoType)
-                    );
+                    checkPropTypes(outerPropTypes, nextProps, "prop", getComponentNameFromType(outerMemoType));
                   }
                 }
               }
             }
             if (current2 !== null) {
               var prevProps = current2.memoizedProps;
-              if (shallowEqual(prevProps, nextProps) && current2.ref === workInProgress2.ref && // Prevent bailout if the implementation changed due to hot reload.
-              workInProgress2.type === current2.type) {
+              if (shallowEqual(prevProps, nextProps) && current2.ref === workInProgress2.ref && workInProgress2.type === current2.type) {
                 didReceiveUpdate = false;
                 workInProgress2.pendingProps = nextProps = prevProps;
                 if (!checkScheduledUpdateOrContext(current2, renderLanes2)) {
@@ -17031,13 +16329,7 @@
               if (workInProgress2.type !== workInProgress2.elementType) {
                 var innerPropTypes = Component.propTypes;
                 if (innerPropTypes) {
-                  checkPropTypes(
-                    innerPropTypes,
-                    nextProps,
-                    // Resolved props
-                    "prop",
-                    getComponentNameFromType(Component)
-                  );
+                  checkPropTypes(innerPropTypes, nextProps, "prop", getComponentNameFromType(Component));
                 }
               }
             }
@@ -17107,13 +16399,7 @@
               if (workInProgress2.type !== workInProgress2.elementType) {
                 var innerPropTypes = Component.propTypes;
                 if (innerPropTypes) {
-                  checkPropTypes(
-                    innerPropTypes,
-                    nextProps,
-                    // Resolved props
-                    "prop",
-                    getComponentNameFromType(Component)
-                  );
+                  checkPropTypes(innerPropTypes, nextProps, "prop", getComponentNameFromType(Component));
                 }
               }
             }
@@ -17328,24 +16614,11 @@
                   if (workInProgress2.type !== workInProgress2.elementType) {
                     var outerPropTypes = Component.propTypes;
                     if (outerPropTypes) {
-                      checkPropTypes(
-                        outerPropTypes,
-                        resolvedProps,
-                        // Resolved for outer only
-                        "prop",
-                        getComponentNameFromType(Component)
-                      );
+                      checkPropTypes(outerPropTypes, resolvedProps, "prop", getComponentNameFromType(Component));
                     }
                   }
                 }
-                child = updateMemoComponent(
-                  null,
-                  workInProgress2,
-                  Component,
-                  resolveDefaultProps(Component.type, resolvedProps),
-                  // The inner type can have defaults too
-                  renderLanes2
-                );
+                child = updateMemoComponent(null, workInProgress2, Component, resolveDefaultProps(Component.type, resolvedProps), renderLanes2);
                 return child;
               }
             }
@@ -17416,11 +16689,7 @@
                 }
               }
             }
-            if (
-              // Run these checks in production only if the flag is off.
-              // Eventually we'll delete this branch altogether.
-              typeof value === "object" && value !== null && typeof value.render === "function" && value.$$typeof === void 0
-            ) {
+            if (typeof value === "object" && value !== null && typeof value.render === "function" && value.$$typeof === void 0) {
               {
                 var _componentName2 = getComponentNameFromType(Component) || "Unknown";
                 if (!didWarnAboutModulePatternComponent[_componentName2]) {
@@ -17685,17 +16954,7 @@
               children: primaryChildren
             };
             var primaryChildFragment;
-            if (
-              // In legacy mode, we commit the primary tree as if it successfully
-              // completed, even though it's in an inconsistent state.
-              (mode & ConcurrentMode) === NoMode && // Make sure we're on the second pass, i.e. the primary child fragment was
-              // already cloned. In legacy mode, the only case where this isn't true is
-              // when DevTools forces us to display a fallback; we skip the first render
-              // pass entirely and go straight to rendering the fallback. (In Concurrent
-              // Mode, SuspenseList can also trigger this scenario, but this is a legacy-
-              // only codepath.)
-              workInProgress2.child !== currentPrimaryChildFragment
-            ) {
+            if ((mode & ConcurrentMode) === NoMode && workInProgress2.child !== currentPrimaryChildFragment) {
               var progressedPrimaryFragment = workInProgress2.child;
               primaryChildFragment = progressedPrimaryFragment;
               primaryChildFragment.childLanes = NoLanes;
@@ -17771,15 +17030,7 @@
             if (!didSuspend) {
               warnIfHydrating();
               if ((workInProgress2.mode & ConcurrentMode) === NoMode) {
-                return retrySuspenseComponentWithoutHydrating(
-                  current2,
-                  workInProgress2,
-                  renderLanes2,
-                  // TODO: When we delete legacy mode, we should make this error argument
-                  // required — every concurrent mode path that causes hydration to
-                  // de-opt to client rendering should have an error message.
-                  null
-                );
+                return retrySuspenseComponentWithoutHydrating(current2, workInProgress2, renderLanes2, null);
               }
               if (isSuspenseInstanceFallback(suspenseInstance)) {
                 var digest, message, stack;
@@ -18032,14 +17283,7 @@
                     tail = lastContentRow.sibling;
                     lastContentRow.sibling = null;
                   }
-                  initSuspenseListRenderState(
-                    workInProgress2,
-                    false,
-                    // isBackwards
-                    tail,
-                    lastContentRow,
-                    tailMode
-                  );
+                  initSuspenseListRenderState(workInProgress2, false, tail, lastContentRow, tailMode);
                   break;
                 }
                 case "backwards": {
@@ -18057,28 +17301,11 @@
                     _tail = row;
                     row = nextRow;
                   }
-                  initSuspenseListRenderState(
-                    workInProgress2,
-                    true,
-                    // isBackwards
-                    _tail,
-                    null,
-                    // last
-                    tailMode
-                  );
+                  initSuspenseListRenderState(workInProgress2, true, _tail, null, tailMode);
                   break;
                 }
                 case "together": {
-                  initSuspenseListRenderState(
-                    workInProgress2,
-                    false,
-                    // isBackwards
-                    null,
-                    // tail
-                    null,
-                    // last
-                    void 0
-                  );
+                  initSuspenseListRenderState(workInProgress2, false, null, null, void 0);
                   break;
                 }
                 default: {
@@ -18352,14 +17579,11 @@
             if (current2 !== null) {
               var oldProps = current2.memoizedProps;
               var newProps = workInProgress2.pendingProps;
-              if (oldProps !== newProps || hasContextChanged() || // Force a re-render if the implementation changed due to hot reload:
-              workInProgress2.type !== current2.type) {
+              if (oldProps !== newProps || hasContextChanged() || workInProgress2.type !== current2.type) {
                 didReceiveUpdate = true;
               } else {
                 var hasScheduledUpdateOrContext = checkScheduledUpdateOrContext(current2, renderLanes2);
-                if (!hasScheduledUpdateOrContext && // If this is the second pass of an error or suspense boundary, there
-                // may not be work scheduled on `current`, so we check for this flag.
-                (workInProgress2.flags & DidCapture) === NoFlags) {
+                if (!hasScheduledUpdateOrContext && (workInProgress2.flags & DidCapture) === NoFlags) {
                   didReceiveUpdate = false;
                   return attemptEarlyBailoutIfNoScheduledUpdate(current2, workInProgress2, renderLanes2);
                 }
@@ -18432,13 +17656,7 @@
                   if (workInProgress2.type !== workInProgress2.elementType) {
                     var outerPropTypes = _type2.propTypes;
                     if (outerPropTypes) {
-                      checkPropTypes(
-                        outerPropTypes,
-                        _resolvedProps3,
-                        // Resolved for outer only
-                        "prop",
-                        getComponentNameFromType(_type2)
-                      );
+                      checkPropTypes(outerPropTypes, _resolvedProps3, "prop", getComponentNameFromType(_type2));
                     }
                   }
                 }
@@ -18718,11 +17936,7 @@
                   } else {
                     if (current2 !== null) {
                       var prevState = current2.memoizedState;
-                      if (
-                        // Check if this is a client root
-                        !prevState.isDehydrated || // Check if we reverted to client rendering (e.g. due to an error)
-                        (workInProgress2.flags & ForceClientRender) !== NoFlags
-                      ) {
+                      if (!prevState.isDehydrated || (workInProgress2.flags & ForceClientRender) !== NoFlags) {
                         workInProgress2.flags |= Snapshot2;
                         upgradeHydrationErrorsToRecoverable();
                       }
@@ -18928,12 +18142,7 @@
                         bubbleProperties(workInProgress2);
                         return null;
                       }
-                    } else if (
-                      // The time it took to render last row is greater than the remaining
-                      // time we have to render. So rendering one more row would likely
-                      // exceed it.
-                      now2() * 2 - renderState.renderingStartTime > getRenderTargetTime() && renderLanes2 !== OffscreenLane
-                    ) {
+                    } else if (now2() * 2 - renderState.renderingStartTime > getRenderTargetTime() && renderLanes2 !== OffscreenLane) {
                       workInProgress2.flags |= DidCapture;
                       didSuspendAlready = true;
                       cutOffTailIfNeeded(renderState, false);
@@ -18982,8 +18191,7 @@
                 if (current2 !== null) {
                   var _prevState = current2.memoizedState;
                   var prevIsHidden = _prevState !== null;
-                  if (prevIsHidden !== nextIsHidden && // LegacyHidden doesn't do any hiding — it only pre-renders.
-                  !enableLegacyHidden) {
+                  if (prevIsHidden !== nextIsHidden && !enableLegacyHidden) {
                     workInProgress2.flags |= Visibility;
                   }
                 }
@@ -20070,10 +19278,7 @@
                 return;
               }
               case OffscreenComponent: {
-                if (
-                  // TODO: Remove this dead flag
-                  deletedFiber.mode & ConcurrentMode
-                ) {
+                if (deletedFiber.mode & ConcurrentMode) {
                   var prevOffscreenSubtreeWasHidden = offscreenSubtreeWasHidden;
                   offscreenSubtreeWasHidden = prevOffscreenSubtreeWasHidden || deletedFiber.memoizedState !== null;
                   recursivelyTraverseDeletionEffects(finishedRoot, nearestMountedAncestor, deletedFiber);
@@ -20319,10 +19524,7 @@
               }
               case OffscreenComponent: {
                 var _wasHidden = current2 !== null && current2.memoizedState !== null;
-                if (
-                  // TODO: Remove this dead flag
-                  finishedWork.mode & ConcurrentMode
-                ) {
+                if (finishedWork.mode & ConcurrentMode) {
                   var prevOffscreenSubtreeWasHidden = offscreenSubtreeWasHidden;
                   offscreenSubtreeWasHidden = prevOffscreenSubtreeWasHidden || _wasHidden;
                   recursivelyTraverseMutationEffects(root2, finishedWork);
@@ -20424,12 +19626,7 @@
                   var child = firstChild;
                   while (child !== null) {
                     nextEffect = child;
-                    commitLayoutEffects_begin(
-                      child,
-                      // New root; bubble back up to here and stop.
-                      root2,
-                      committedLanes
-                    );
+                    commitLayoutEffects_begin(child, root2, committedLanes);
                     child = child.sibling;
                   }
                   nextEffect = fiber;
@@ -20869,20 +20066,14 @@
           var ReactCurrentActQueue = ReactSharedInternals.ReactCurrentActQueue;
           function isLegacyActEnvironment(fiber) {
             {
-              var isReactActEnvironmentGlobal = (
-                // $FlowExpectedError – Flow doesn't know about IS_REACT_ACT_ENVIRONMENT global
-                typeof IS_REACT_ACT_ENVIRONMENT !== "undefined" ? IS_REACT_ACT_ENVIRONMENT : void 0
-              );
+              var isReactActEnvironmentGlobal = typeof IS_REACT_ACT_ENVIRONMENT !== "undefined" ? IS_REACT_ACT_ENVIRONMENT : void 0;
               var jestIsDefined = typeof jest !== "undefined";
               return jestIsDefined && isReactActEnvironmentGlobal !== false;
             }
           }
           function isConcurrentActEnvironment() {
             {
-              var isReactActEnvironmentGlobal = (
-                // $FlowExpectedError – Flow doesn't know about IS_REACT_ACT_ENVIRONMENT global
-                typeof IS_REACT_ACT_ENVIRONMENT !== "undefined" ? IS_REACT_ACT_ENVIRONMENT : void 0
-              );
+              var isReactActEnvironmentGlobal = typeof IS_REACT_ACT_ENVIRONMENT !== "undefined" ? IS_REACT_ACT_ENVIRONMENT : void 0;
               if (!isReactActEnvironmentGlobal && ReactCurrentActQueue.current !== null) {
                 error2("The current testing environment is not configured to support act(...)");
               }
@@ -20891,22 +20082,10 @@
           }
           var ceil = Math.ceil;
           var ReactCurrentDispatcher$2 = ReactSharedInternals.ReactCurrentDispatcher, ReactCurrentOwner$2 = ReactSharedInternals.ReactCurrentOwner, ReactCurrentBatchConfig$3 = ReactSharedInternals.ReactCurrentBatchConfig, ReactCurrentActQueue$1 = ReactSharedInternals.ReactCurrentActQueue;
-          var NoContext = (
-            /*             */
-            0
-          );
-          var BatchedContext = (
-            /*               */
-            1
-          );
-          var RenderContext = (
-            /*                */
-            2
-          );
-          var CommitContext = (
-            /*                */
-            4
-          );
+          var NoContext = 0;
+          var BatchedContext = 1;
+          var RenderContext = 2;
+          var CommitContext = 4;
           var RootInProgress = 0;
           var RootFatalErrored = 1;
           var RootErrored = 2;
@@ -21037,8 +20216,7 @@
                 }
               }
               ensureRootIsScheduled(root2, eventTime);
-              if (lane === SyncLane && executionContext === NoContext && (fiber.mode & ConcurrentMode) === NoMode && // Treat `act` as if it's inside `batchedUpdates`, even in legacy mode.
-              !ReactCurrentActQueue$1.isBatchingLegacy) {
+              if (lane === SyncLane && executionContext === NoContext && (fiber.mode & ConcurrentMode) === NoMode && !ReactCurrentActQueue$1.isBatchingLegacy) {
                 resetRenderTimer();
                 flushSyncCallbacksOnlyInLegacyMode();
               }
@@ -21051,11 +20229,7 @@
             ensureRootIsScheduled(root2, eventTime);
           }
           function isUnsafeClassRenderPhaseUpdate(fiber) {
-            return (
-              // TODO: Remove outdated deferRenderPhaseUpdateToNextBatch experiment. We
-              // decided not to enable it.
-              (executionContext & RenderContext) !== NoContext
-            );
+            return (executionContext & RenderContext) !== NoContext;
           }
           function ensureRootIsScheduled(root2, currentTime) {
             var existingCallbackNode = root2.callbackNode;
@@ -21071,10 +20245,7 @@
             }
             var newCallbackPriority = getHighestPriorityLane(nextLanes);
             var existingCallbackPriority = root2.callbackPriority;
-            if (existingCallbackPriority === newCallbackPriority && // Special case related to `act`. If the currently scheduled task is a
-            // Scheduler task, rather than an `act` task, cancel it and re-scheduled
-            // on the `act` queue.
-            !(ReactCurrentActQueue$1.current !== null && existingCallbackNode !== fakeActCallbackNode)) {
+            if (existingCallbackPriority === newCallbackPriority && !(ReactCurrentActQueue$1.current !== null && existingCallbackNode !== fakeActCallbackNode)) {
               {
                 if (existingCallbackNode == null && existingCallbackPriority !== SyncLane) {
                   error2("Expected scheduled callback to exist. This error is likely caused by a bug in React. Please file an issue.");
@@ -21239,8 +20410,7 @@
               }
               case RootSuspended: {
                 markRootSuspended$1(root2, lanes);
-                if (includesOnlyRetries(lanes) && // do not delay if we're inside an act() scope
-                !shouldForceFlushFallbacksInDEV()) {
+                if (includesOnlyRetries(lanes) && !shouldForceFlushFallbacksInDEV()) {
                   var msUntilTimeout = globalMostRecentFallbackTime + FALLBACK_THROTTLE_MS - now2();
                   if (msUntilTimeout > 10) {
                     var nextLanes = getNextLanes(root2, NoLanes);
@@ -21390,8 +20560,7 @@
               return fn(a);
             } finally {
               executionContext = prevExecutionContext;
-              if (executionContext === NoContext && // Treat `act` as if it's inside `batchedUpdates`, even in legacy mode.
-              !ReactCurrentActQueue$1.isBatchingLegacy) {
+              if (executionContext === NoContext && !ReactCurrentActQueue$1.isBatchingLegacy) {
                 resetRenderTimer();
                 flushSyncCallbacksOnlyInLegacyMode();
               }
@@ -23011,7 +22180,6 @@
             fiber.stateNode = {
               containerInfo: portal.containerInfo,
               pendingChildren: null,
-              // Used by persistent updates
               implementation: portal.implementation
             };
             return fiber;
@@ -23113,7 +22281,6 @@
                 element: initialChildren,
                 isDehydrated: hydrate2,
                 cache: null,
-                // not enabled yet
                 transitions: null,
                 pendingSuspenseBoundaries: null
               };
@@ -23129,7 +22296,6 @@
               checkKeyStringCoercion(key);
             }
             return {
-              // This tag allow us to uniquely identify this as a React Portal
               $$typeof: REACT_PORTAL_TYPE,
               key: key == null ? null : "" + key,
               children,
@@ -23387,13 +22553,7 @@
                   delete updated[oldKey];
                 }
               } else {
-                updated[oldKey] = copyWithRenameImpl(
-                  // $FlowFixMe number or string is fine here
-                  obj[oldKey],
-                  oldPath,
-                  newPath,
-                  index2 + 1
-                );
+                updated[oldKey] = copyWithRenameImpl(obj[oldKey], oldPath, newPath, index2 + 1);
               }
               return updated;
             };
@@ -23546,23 +22706,15 @@
               currentDispatcherRef: ReactCurrentDispatcher2,
               findHostInstanceByFiber,
               findFiberByHostInstance: findFiberByHostInstance || emptyFindFiberByHostInstance,
-              // React Refresh
               findHostInstancesForRefresh,
               scheduleRefresh,
               scheduleRoot,
               setRefreshHandler,
-              // Enables DevTools to append owner stacks to error messages in DEV mode.
               getCurrentFiber: getCurrentFiberForDevTools,
-              // Enables DevTools to detect reconciler version rather than renderer version
-              // which may not match for third party renderers.
               reconcilerVersion: ReactVersion
             });
           }
-          var defaultOnRecoverableError = typeof reportError === "function" ? (
-            // In modern browsers, reportError will dispatch an error event,
-            // emulating an uncaught JavaScript error.
-            reportError
-          ) : function(error3) {
+          var defaultOnRecoverableError = typeof reportError === "function" ? reportError : function(error3) {
             console["error"](error3);
           };
           function ReactDOMRoot(internalRoot) {
@@ -23764,21 +22916,7 @@
                   originalCallback.call(instance);
                 };
               }
-              var root2 = createHydrationContainer(
-                initialChildren,
-                callback,
-                container,
-                LegacyRoot,
-                null,
-                // hydrationCallbacks
-                false,
-                // isStrictMode
-                false,
-                // concurrentUpdatesByDefaultOverride,
-                "",
-                // identifierPrefix
-                noopOnRecoverableError
-              );
+              var root2 = createHydrationContainer(initialChildren, callback, container, LegacyRoot, null, false, false, "", noopOnRecoverableError);
               container._reactRootContainer = root2;
               markContainerAsRoot(root2.current, container);
               var rootContainerElement = container.nodeType === COMMENT_NODE ? container.parentNode : container;
@@ -23797,19 +22935,7 @@
                   _originalCallback.call(instance);
                 };
               }
-              var _root = createContainer(
-                container,
-                LegacyRoot,
-                null,
-                // hydrationCallbacks
-                false,
-                // isStrictMode
-                false,
-                // concurrentUpdatesByDefaultOverride,
-                "",
-                // identifierPrefix
-                noopOnRecoverableError
-              );
+              var _root = createContainer(container, LegacyRoot, null, false, false, "", noopOnRecoverableError);
               container._reactRootContainer = _root;
               markContainerAsRoot(_root.current, container);
               var _rootContainerElement = container.nodeType === COMMENT_NODE ? container.parentNode : container;
@@ -23955,9 +23081,7 @@
           setGetCurrentUpdatePriority(getCurrentUpdatePriority);
           setAttemptHydrationAtPriority(runWithPriority);
           {
-            if (typeof Map !== "function" || // $FlowIssue Flow incorrectly thinks Map has no prototype
-            Map.prototype == null || typeof Map.prototype.forEach !== "function" || typeof Set !== "function" || // $FlowIssue Flow incorrectly thinks Set has no prototype
-            Set.prototype == null || typeof Set.prototype.clear !== "function" || typeof Set.prototype.forEach !== "function") {
+            if (typeof Map !== "function" || Map.prototype == null || typeof Map.prototype.forEach !== "function" || typeof Set !== "function" || Set.prototype == null || typeof Set.prototype.clear !== "function" || typeof Set.prototype.forEach !== "function") {
               error2("React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills");
             }
           }
@@ -23975,8 +23099,6 @@
           }
           var Internals = {
             usingClientEntryPoint: false,
-            // Keep in sync with ReactTestUtils.js.
-            // This is an array for better minification.
             Events: [getInstanceFromNode, getNodeFromInstance, getFiberCurrentPropsFromNode, enqueueStateRestore, restoreStateIfNeeded, batchedUpdates$1]
           };
           function createRoot$1(container, options2) {
@@ -24049,37 +23171,6 @@
       } else {
         module.exports = require_react_dom_development();
       }
-    }
-  });
-
-  // node_modules/react-dom/client.js
-  var require_client = __commonJS({
-    "node_modules/react-dom/client.js"(exports) {
-      "use strict";
-      var m = require_react_dom();
-      if (false) {
-        exports.createRoot = m.createRoot;
-        exports.hydrateRoot = m.hydrateRoot;
-      } else {
-        i = m.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
-        exports.createRoot = function(c, o) {
-          i.usingClientEntryPoint = true;
-          try {
-            return m.createRoot(c, o);
-          } finally {
-            i.usingClientEntryPoint = false;
-          }
-        };
-        exports.hydrateRoot = function(c, h, o) {
-          i.usingClientEntryPoint = true;
-          try {
-            return m.hydrateRoot(c, h, o);
-          } finally {
-            i.usingClientEntryPoint = false;
-          }
-        };
-      }
-      var i;
     }
   });
 
@@ -25960,7 +25051,7 @@
       }
     }
     recordTimingMetric(metric) {
-      this.timingMetrics[metric] = (/* @__PURE__ */ new Date()).getTime();
+      this.timingMetrics[metric] = new Date().getTime();
     }
     getTimingMetrics() {
       return Object.assign({}, this.timingMetrics);
@@ -30310,7 +29401,7 @@
 
   // app/javascript/components/counter.jsx
   var import_react = __toESM(require_react());
-  var import_client = __toESM(require_client());
+  var import_react_dom = __toESM(require_react_dom());
   var Counter = ({ arg }) => {
     const [count, setCount] = (0, import_react.useState)(0);
     const countRef = (0, import_react.useRef)(count);
@@ -30325,58 +29416,51 @@
   };
   document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("root");
-    const root = (0, import_client.createRoot)(container);
-    root.render(/* @__PURE__ */ import_react.default.createElement(Counter, { arg: `
+    const root = (0, import_react_dom.createRoot)(container);
+    root.render(/* @__PURE__ */ import_react.default.createElement(Counter, {
+      arg: `
     Ruby ${container.getAttribute("ruby")}
-    Rails ${container.getAttribute("rails")}` }));
+    Rails ${container.getAttribute("rails")}`
+    }));
   });
 })();
-/*! Bundled license information:
-
-react/cjs/react.development.js:
-  (**
-   * @license React
-   * react.development.js
-   *
-   * Copyright (c) Facebook, Inc. and its affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-scheduler/cjs/scheduler.development.js:
-  (**
-   * @license React
-   * scheduler.development.js
-   *
-   * Copyright (c) Facebook, Inc. and its affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-react-dom/cjs/react-dom.development.js:
-  (**
-   * @license React
-   * react-dom.development.js
-   *
-   * Copyright (c) Facebook, Inc. and its affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-  (**
-   * Checks if an event is supported in the current execution environment.
-   *
-   * NOTE: This will not work correctly for non-generic events such as `change`,
-   * `reset`, `load`, `error`, and `select`.
-   *
-   * Borrows from Modernizr.
-   *
-   * @param {string} eventNameSuffix Event name, e.g. "click".
-   * @return {boolean} True if the event is supported.
-   * @internal
-   * @license Modernizr 3.0.0pre (Custom Build) | MIT
-   *)
-*/
-//# sourceMappingURL=application.js.map
+/**
+ * @license React
+ * react-dom.development.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+/**
+ * @license React
+ * react.development.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+/**
+ * @license React
+ * scheduler.development.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+/**
+ * Checks if an event is supported in the current execution environment.
+ *
+ * NOTE: This will not work correctly for non-generic events such as `change`,
+ * `reset`, `load`, `error`, and `select`.
+ *
+ * Borrows from Modernizr.
+ *
+ * @param {string} eventNameSuffix Event name, e.g. "click".
+ * @return {boolean} True if the event is supported.
+ * @internal
+ * @license Modernizr 3.0.0pre (Custom Build) | MIT
+ */
