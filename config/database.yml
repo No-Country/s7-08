@@ -3,6 +3,9 @@ default: &default
   encoding: unicode
   pool: 5
 
+production:
+    <<: *default
+    database: s7_08_production
 development:
     <<: *default
     database: s7_08_development
