@@ -18,6 +18,10 @@ gem "puma", "~> 6.1"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
 
+gem "importmap-rails", "~> 0.3.4"
+
+#gem 'importmap-rails', '~> 0.3.2'
+
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
 
@@ -40,7 +44,8 @@ gem "redis", "~> 5.0"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 1.2"
+gem 'mini_magick'
 
 # Execute jobs in the background [https://github.com/mperham/sidekiq]
 gem "sidekiq", "~> 7.0"
@@ -78,4 +83,7 @@ group :test do
   gem "webdrivers"
 end
 
-gem "tailwindcss-rails", "~> 2.0"
+gem "dockerfile-rails", ">= 1.2", :group => :development
+
+gem 'devise', '~> 4.9'
+
