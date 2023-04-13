@@ -192,13 +192,6 @@ body {
   background: #555;
 }
 
-.last-message,
-.last-message-time {
-  font-size: 12px;
-  color: #aaa;
-  margin-top: 5px;
-}
-
 .message-image-container {
   width: 150px;
   height: 150px;
@@ -233,4 +226,12 @@ body {
   font-size: 12px;
   color: #aaa;
   margin-top: 5px;
+}
+
+.msg-role-user {
+  color: #ffee00;
+}
+
+.msg-role-admin {
+  color: #00e5ff;
 }

@@ -13,6 +13,9 @@ class User < ApplicationRecord
   has_many :joinables, dependent: :destroy
   has_many :joined_rooms, through: :joinables, source: :room
 
+  has_many :notifications, dependent: :destroy, as: :recipient
+
+
   enum role: %i[user admin].freeze, _default: 0
 
   after_commit :add_default_avatar, on: %i[create update]
