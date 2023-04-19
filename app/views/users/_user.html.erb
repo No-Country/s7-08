@@ -9,12 +9,12 @@
       <div class="col-12 d-flex align-items-center justify-content-between">
         <div class="icon-container">
           <%= link_to image_tag(user.chat_avatar, class: 'chat_pfp'), user %>
-          <%= turbo_stream_from "user_status" %>
+          <%# <%= turbo_stream_from "user_status" %>
           <div>
             <%= render "users/status", user: user %>
           </div>
         </div>
-        <%= link_to user.email, user, class:"ms-2 me-auto username msg-role-#{user.role}"%>
+        <%= link_to user.username, user, class:"ms-2 me-auto username msg-role-#{user.role}"%>
       </div>
     </div>
     <%= turbo_frame_tag [dom_id(room), "user_last_message"] do %>

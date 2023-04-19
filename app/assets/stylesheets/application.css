@@ -14,7 +14,7 @@ body {
     height: calc(100vh - 150px);
 }
 #messages {
-    height: calc(100vh - 150px);
+    height: 85vh;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -48,7 +48,7 @@ body {
     margin-bottom: 10px;
     background-color: #555555;
     padding: 10px;
-}
+  }
 
 .user_row {
     height: 50px;
@@ -58,6 +58,8 @@ body {
   
   .username {
     overflow: hidden;
+    font-size: x-large;
+    font-family: monospace;
   }
   
   .chat_pfp {
@@ -68,12 +70,13 @@ body {
   }
   .user_list_item {
     height: auto;
-    background-color: #343a40 !important;
+    /* background-color: #343a40 !important; */
   }
   .room_list_item {
     height: auto;
-    background-color: #343a40 !important;
+    /* background-color: #343a40 !important; */
     color: #fff;
+    font-size: large;
   }
   
   .name {
@@ -84,7 +87,7 @@ body {
   .time {
     padding-top: 0px;
     margin-top: 0px;
-    padding-bottom: 0px;
+    padding-bottom: 10px;
     margin-bottom: 0px;
   }
 .icon_container {
@@ -99,7 +102,7 @@ body {
     background-color: grey;
     border: 2px solid white;
     bottom: 10px;
-    right: 10px;
+    right: -25px;
     position: relative;
 }
 .image-upload > input {
@@ -200,10 +203,11 @@ body {
 }
 .message-image {
   width: auto;
-  height: 150px;
+  height: 130px;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  
 }
 .message-video {
   width: auto;
@@ -226,6 +230,7 @@ body {
   font-size: 12px;
   color: #aaa;
   margin-top: 5px;
+  margin-right: 10px;
 }
 
 .msg-role-user {
@@ -234,4 +239,8 @@ body {
 
 .msg-role-admin {
   color: #00e5ff;
+}
+
+a {
+  text-decoration: none !important;
 }

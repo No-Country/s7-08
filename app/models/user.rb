@@ -6,12 +6,13 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   scope :all_except, ->(user) { where.not(id: user) }
   after_create_commit { broadcast_append_to "users" }
-  after_update_commit { broadcast_update }
+  # after_update_commit { broadcast_update }
   has_many :messages, dependent: :destroy
   has_many :participants, dependent: :destroy
   has_one_attached :avatar
   has_many :joinables, dependent: :destroy
   has_many :joined_rooms, through: :joinables, source: :room
+  validates_uniqueness_of :username, required: true, case_sensitive: false
 
   has_many :notifications, dependent: :destroy, as: :recipient
 

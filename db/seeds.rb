@@ -8,12 +8,15 @@
 admin = User.create(email: 'admin@gmail.com',
                    password: 'password',
                    password_confirmation: 'password',
-                   role: 'admin')
+                   role: 'admin',
+                   username: 'Admin')
 User.create(email: 'user@gmail.com',
             password: 'password',
-            password_confirmation: 'password')
+            password_confirmation: 'password',
+            username: 'User')
 User.create(email: 'user2@gmail.com',
             password: 'password',
-            password_confirmation: 'password')
+            password_confirmation: 'password',
+            username: 'User2')
 admin.joined_rooms << Room.create(name: 'General', is_private: false)
 admin.joined_rooms << Room.create(name: 'Testing', is_private: false)

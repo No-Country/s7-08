@@ -1,7 +1,7 @@
 class RoomsController < ApplicationController
   include RoomsHelper
   before_action :authenticate_user!
-  before_action :set_status
+  # before_action :set_status
   before_action 
 
   def index
